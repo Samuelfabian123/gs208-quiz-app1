@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>GS 208 CBT Practice - UNN</title>
+<style>
+:root{--g:#0b5d2a;--g2:#e8f3ec;--r:#b3261e;--bd:#d3d9d5;--tx:#1b1f1d;--am:#c77700}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,"Segoe UI",Arial,sans-serif;background:#f3f5f4;color:var(--tx);line-height:1.45}
+header{background:var(--g);color:#fff;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;gap:10px;position:sticky;top:0;z-index:5}
+header h1{font-size:15px;margin:0;font-weight:700}
+header small{display:block;font-weight:400;opacity:.85;font-size:12px}
+#who{font-size:12px;text-align:right}
+#who button{margin-left:6px}
+main{max-width:860px;margin:0 auto;padding:16px}
+.card{background:#fff;border:1px solid var(--bd);border-radius:10px;padding:18px;margin-bottom:14px}
+h2{margin:0 0 10px;font-size:18px}
+label{display:block;font-size:13px;font-weight:600;margin:12px 0 4px}
+input{width:100%;padding:11px;border:1px solid var(--bd);border-radius:8px;font-size:15px}
+input:focus{outline:2px solid var(--g);border-color:var(--g)}
+.btn{background:var(--g);color:#fff;border:0;padding:11px 18px;border-radius:8px;font-size:15px;font-weight:600;cursor:pointer}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+.btn.alt{background:#fff;color:var(--g);border:1px solid var(--g)}
+.btn.red{background:var(--r)}
+.btn.sm{padding:6px 10px;font-size:12px}
+.tabs{display:flex;gap:8px;margin-bottom:6px}
+.tabs button{flex:1;padding:10px;border:1px solid var(--bd);background:#fff;border-radius:8px;font-weight:600;cursor:pointer}
+.tabs button.on{background:var(--g);color:#fff;border-color:var(--g)}
+.err{color:var(--r);font-size:13px;margin-top:10px;min-height:18px}
+.hint{font-size:12px;color:#5b6560;margin-top:3px}
+ul.rules{padding-left:18px;margin:8px 0 16px}
+ul.rules li{margin:4px 0}
+.hide{display:none!important}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.sp{flex:1}
+#bar{position:sticky;top:48px;z-index:4;background:#fff;border:1px solid var(--bd);border-radius:10px;padding:10px 14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;gap:10px}
+#timer{font-size:20px;font-weight:700;font-variant-numeric:tabular-nums}
+#timer.low{color:var(--r)}
+.qn{font-size:12px;color:#5b6560;margin-bottom:6px;font-weight:600}
+.qt{font-size:17px;font-weight:600;margin-bottom:14px}
+.opt{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;background:#fff;border:1px solid var(--bd);border-radius:8px;padding:12px;margin-bottom:8px;font-size:15px;cursor:pointer}
+.opt:hover{background:var(--g2)}
+.opt.sel{background:var(--g2);border-color:var(--g);outline:1px solid var(--g)}
+.opt b{min-width:20px}
+#pal{display:grid;grid-template-columns:repeat(10,1fr);gap:6px}
+@media(max-width:520px){#pal{grid-template-columns:repeat(7,1fr)}}
+#pal button{padding:8px 0;border:1px solid var(--bd);background:#fff;border-radius:6px;font-size:12px;cursor:pointer}
+#pal button.ans{background:var(--g);color:#fff;border-color:var(--g)}
+#pal button.cur{outline:2px solid var(--am)}
+.score{font-size:42px;font-weight:800;color:var(--g)}
+.rv{border:1px solid var(--bd);border-radius:8px;padding:12px;margin-bottom:10px;background:#fff}
+.rv.bad{border-left:5px solid var(--r)}
+.rv.ok{border-left:5px solid var(--g)}
+.rv .a{font-size:14px;margin-top:4px}
+.good{color:var(--g);font-weight:600}
+.wrong{color:var(--r);font-weight:600}
+table{width:100%;border-collapse:collapse;font-size:13px}
+td,th{padding:6px 4px;border-bottom:1px solid var(--bd);text-align:left}
+</style>
+</head>
+<body>
+<header>
+  <h1>University of Nigeria, Nsukka<small>GS 208 - Peoples and Cultures of Nigeria | CBT Practice</small></h1>
+  <div id="who" class="hide"><span id="whoTxt"></span><button class="btn alt sm" onclick="logout()" style="background:#fff">Logout</button></div>
+</header>
+<main>
+ 
+<section id="auth" class="card">
+  <h2>Login</h2>
+  <form id="fm" onsubmit="return submitAuth(event)">
+    <label for="nm">Full name</label>
+    <input id="nm" autocomplete="name" placeholder="e.g. Chukwuemeka Obi">
+    <label for="reg">Registration number</label>
+    <input id="reg" inputmode="numeric" autocomplete="off" placeholder="e.g. 2021/242345" maxlength="12">
+    <div class="hint">Type the numbers only, the / is added for you (e.g. 2021/242345)</div>
+    <div class="err" id="err"></div>
+    <button class="btn" id="go" style="width:100%;margin-top:6px">Login and Start</button>
+  </form>
+</section>
+ 
+<section id="home" class="card hide">
+  <h2>Welcome, <span id="hName"></span></h2>
+  <div class="hint" style="margin-bottom:8px">Reg No: <span id="hReg"></span></div>
+  <p><b>Instructions</b></p>
+  <ul class="rules">
+    <li><b>70 questions</b> randomly picked from the GS 208 bank, each with 4 options.</li>
+    <li>Time allowed: <b>25 minutes</b>. The test submits itself when time is up.</li>
+    <li>Options and questions are shuffled every attempt.</li>
+    <li>If you refresh or close the page, your test continues from where you stopped (timer keeps running).</li>
+    <li>You can move back and forth using Next, Previous or the question numbers.</li>
+  </ul>
+  <div class="row">
+    <button class="btn" id="startBtn" onclick="startQuiz()">Start Test</button>
+    <span id="resumeNote" class="hint"></span>
+  </div>
+  <h2 style="margin-top:22px;font-size:15px">Your previous attempts</h2>
+  <div id="hist" class="hint">No attempts yet.</div>
+</section>
+ 
+<section id="quiz" class="hide">
+  <div id="bar">
+    <div><div class="qn" id="prog"></div><div class="hint" id="ansCount"></div></div>
+    <div id="timer">25:00</div>
+    <button class="btn red sm" onclick="confirmSubmit()">Submit</button>
+  </div>
+  <div class="card">
+    <div class="qn" id="qn"></div>
+    <div class="qt" id="qt"></div>
+    <div id="opts"></div>
+    <div class="row" style="margin-top:12px">
+      <button class="btn alt" id="prev" onclick="go(-1)">Previous</button>
+      <span class="sp"></span>
+      <button class="btn" id="next" onclick="go(1)">Next</button>
+    </div>
+  </div>
+  <div class="card"><div class="qn">Question navigator</div><div id="pal"></div></div>
+</section>
+ 
+<section id="result" class="hide">
+  <div class="card" style="text-align:center">
+    <div class="hint">Your score</div>
+    <div class="score" id="sc"></div>
+    <div id="pc" style="font-weight:700"></div>
+    <div id="rm" class="hint" style="margin:6px 0 14px"></div>
+    <div class="row" style="justify-content:center">
+      <button class="btn" onclick="startQuiz(true)">Retake (new questions)</button>
+      <button class="btn alt" onclick="showHome()">Home</button>
+      <button class="btn alt" id="tgl" onclick="toggleWrong()">Show wrong only</button>
+    </div>
+  </div>
+  <div id="rvList"></div>
+</section>
+ 
+</main>
+ 
+<script>
+/* ---------- QUESTION BANK: [question, correct, wrong1, wrong2, wrong3] ---------- */
+const B=[
+["Approximate number of ethnic groups in Nigeria","250","150","350","450"],
+["The lingua franca of Nigeria is","English","Hausa","Igbo","Yoruba"],
+["Who defined language as a system of arbitrary vocal symbols by means of which a social group operates?","Wardhaugh","Solanke","Meziobi","Enebe"],
+["Who stated that language is the vehicle through which a people's culture is transmitted?","Solanke","Wardhaugh","Agbo","Meziobi"],
+["The most effective engine of a people's culture is their","Mother tongue","Religion","Clothing","Food"],
+["Cultural factors such as music, language, clothing and food that bind a group of people together is called","Ethnicity","Nationalism","Tribalism","Ideology"],
+["'Culture is the totality of the lifestyle of the people' is attributed to","Agbo","Enebe","Meziobi","Solanke"],
+["Who described culture as the knowledge, belief, custom, value, ideas and skills of a society that differentiate it from others?","Enebe","Agbo","Solanke","Wardhaugh"],
+["Who defined ethnicity as a collective of persons who share common cultural traditions reflecting common ancestry, mother tongue and religion?","Meziobi","Agbo","Enebe","Wardhaugh"],
+["Members living in a territory who are not part of its ethnic groups are regarded as","Non-indigenes","Nomads","Nationals","Natives"],
+["The name 'Nigeria' was coined by","Flora Shaw","Lord Lugard","Herbert Macaulay","Hugh Clifford"],
+["Nigeria was formerly called the","Royal Niger Territories","Gold Coast","Oil Rivers Union","Benue Colony"],
+["The origin of Nigeria's history started with the","Nok civilization","Berlin Conference","Amalgamation","Jihad of 1804"],
+["Nigeria became a protectorate on 1st January","1900","1914","1884","1960"],
+["The Northern and Southern protectorates were amalgamated in","1914","1900","1906","1960"],
+["The Hausa people mainly live in the","Northern part of Nigeria","South-west","South-east","South-south"],
+["The ancestral home of the Yoruba is","Ile-Ife","Oyo","Abeokuta","Ibadan"],
+["The progenitor of the Yoruba is","Oduduwa","Sango","Ogun","Obatala"],
+["The Igbo are known for entrepreneurship, sense of community and","Resilient character","Isolation","Warfare","Nomadism"],
+["The most notable craftsmanship of the pre-colonial Igbo was","Blacksmithing","Leather work","Glass making","Ship building"],
+["The Afro-Asiatic language family in Nigeria is dominated by the","Hausa","Kanuri","Igbo","Yoruba"],
+["The Nilo-Saharan language family in Nigeria is dominated by the","Kanuri","Hausa","Tiv","Edo"],
+["The Nok culture flourished in","Jos","Kano","Benin","Oyo"],
+["Who made the bronze statue of Queen Elizabeth during her visit to Nigeria?","Enwonwu","Fela Kuti","Osadebe","Achebe"],
+["The period before the arrival of European imperialists is called","Pre-colonial Nigeria","Post-colonial Nigeria","Neo-colonial Nigeria","Amalgamation era"],
+["Nigeria lies between latitudes","4°N and 14°N","0° and 10°N","10°N and 20°N","4°S and 4°N"],
+["Which is NOT one of the four distinct areas of Nigeria?","Tundra","Swamp and mangrove forest","Tropical rainforest","Plateau with hills"],
+["The primary identifier of an ethnic group is","Language","Wealth","Occupation","Age"],
+["The predominant social organisation in pre-colonial Nigeria was the","Extended family","Nuclear family","Political party","Trade union"],
+["The Igbo freeborn is called","Nwa-afo","Ohu","Osu","Oloye"],
+["In Igbo society the ritual slave is called","Osu","Ohu","Nwa-afo","Eru"],
+["In Igbo society the slave is called","Ohu","Osu","Bayi","Omo"],
+["In the Hausa hierarchy, slaves are called","Bayi","Yanuwa","Eru","Ohu"],
+["In Yoruba society, slaves are called","Eru","Omo","Oloye","Bayi"],
+["The Yoruba royal family is called","Oloye","Omo","Eru","Gwari"],
+["Which group gives women full access to decision making based on age?","Yoruba","Igbo","Hausa","None of them"],
+["Yoruba deities are known as","Orishas","Alusi","Tsumburburia","Ofo"],
+["Sango is the Yoruba god of","Lightning","Iron","Palm-nut oracle","Thunderstorm"],
+["Oya is the Yoruba goddess of","Thunderstorm","Lightning","Iron","Wealth"],
+["Ogun is the Yoruba god of","Iron","Lightning","Thunderstorm","Farming"],
+["Ifa is the","Oracle of palm nut","God of iron","Goddess of thunderstorm","God of lightning"],
+["The Jihad of Uthman Dan Fodio took place in","1804","1900","1884","1914"],
+["The Igbo transmit history, cultural values and moral teachings through","Folklore and proverbs","Leather work","Durbar","Jihad"],
+["Ikenga is a(n)","Igbo wooden sculpture","Yoruba deity","Hausa festival","Hausa title"],
+["The Hausa are known for","Leather work, pottery and weaving","Bronze casting only","Blacksmithing only","Ship building"],
+["Dodo masquerade belongs to the","Hausa","Yoruba","Igbo","Bini"],
+["Egungun masquerade belongs to the","Yoruba","Hausa","Igbo","Ibibio"],
+["Ijele masquerade belongs to the","Igbo","Yoruba","Hausa","Bini"],
+["Ekpe masquerade belongs to the","Ibibio","Igbo","Bini","Hausa"],
+["Erinmi masquerade belongs to the","Bini","Ibibio","Yoruba","Hausa"],
+["The Hausa festival is","Durbar","Sango festival","New yam festival","Iri ji"],
+["The Sango festival is celebrated by the","Yoruba","Hausa","Igbo","Tiv"],
+["The New Yam festival is celebrated by the","Igbo","Hausa","Yoruba","Kanuri"],
+["Rulers of the Hausa city-states were called","Emirs","Obas","Ozo","Alaafin"],
+["The Igbo political system was","Decentralised, governed by village councils and age grades","A centralised monarchy","A caliphate","An empire"],
+["The political head of Oyo was the","Alaafin","Ooni","Sarki","Bashorun"],
+["The political head of Ife was the","Ooni","Alaafin","Oyomesi","Aremo"],
+["The Oyomesi (council of elders) was led by the","Bashorun","Aremo","Ilari","Osi efa"],
+["The power of the Alaafin and Ooni was checked by the","Ogboni cult","Age grades","Emirs","Ozo"],
+["The Yoruba crowned prince is called","Aremo","Ilari","Iya Oba","Osi efa"],
+["Iya Oba means","King's mother","Crowned prince","King's eunuch","Messenger"],
+["Ilari were the king's","Messengers or bodyguards","Mothers","Eunuchs","Priests"],
+["In Hausa land a king is called","Sarki","Oba","Eze","Ooni"],
+["After the Jihad, the Hausa Caliphate was divided into","Emirates","Colonies","Regions","Clans"],
+["The Emirates were administered under","Islamic and Sharia law","Common law","Customary law only","Military decree"],
+["Married women in Igbo land are called","Ndi iyom","Umuada","Ndi ozo","Ndi ichie"],
+["The tripod of the pre-colonial economy was agriculture, trading and","Manufacturing","Mining","Banking","Tourism"],
+["Tin and copper smithing was popular among the","Hausa","Igbo","Yoruba","Tiv"],
+["The Igbo used ___ from palm fronds to make mats","Raffia","Elephant grass","Cotton","Leather"],
+["The Hausa made mats from","Dry elephant grass","Raffia","Palm fronds","Cotton"],
+["The Igbo group notably known for the Transatlantic slave trade were the","Aro","Nri","Ibibio","Ijaw"],
+["The pattern of exchange in pre-colonial Nigeria was by","Barter","Credit card","Cheque","Stock exchange"],
+["The scramble for Africa started with the Berlin Conference of","1884-1885","1900-1901","1914-1915","1960-1961"],
+["The discovery that resists malaria and helped Europeans penetrate Africa was","Quinine","Penicillin","Aspirin","Chloroquine"],
+["Which was NOT one of the three colonies after the amalgamation?","Western protectorate","Lagos colony","Southern protectorate","Northern protectorate"],
+["The southern protectorate was formerly called the","Oil River protectorate","Niger Coast","Lagos colony","Royal Niger Company"],
+["Governor of the Northern protectorate was","Sir Frederick Lugard","Sir Ralph Moore","Dr William MacGregor","Hugh Clifford"],
+["Governor of the Southern protectorate was","Sir Ralph Moore","Sir Frederick Lugard","Dr William MacGregor","Arthur Richards"],
+["Governor of Lagos colony was","Dr William MacGregor","Sir Ralph Moore","Sir Frederick Lugard","John Stuart"],
+["Elective principles and the first political party (NNDP) came during the administration of","Sir Hugh Clifford","Lord Lugard","Sir Arthur Richards","Sir Bernard Bourdillon"],
+["The Nigerian National Democratic Party (NNDP) was founded by","Herbert Macaulay","Nnamdi Azikiwe","Obafemi Awolowo","Tafawa Balewa"],
+["Who split the southern protectorate into Western and Eastern regions?","Sir Bernard Bourdillon","Sir Hugh Clifford","Lord Lugard","Sir Arthur Richards"],
+["The northern protectorate was not split because","They share a common culture","It was too small","It was rich in oil","Of the Jihad"],
+["Which constitution was rejected by nationalists because they were not consulted, and introduced regionalism?","Richards Constitution","Clifford Constitution","Stuart Constitution","Lugard Constitution"],
+["The constitution officially used in 1951 was associated with","Sir John Stuart","Sir Arthur Richards","Hugh Clifford","Lord Lugard"],
+["The error of the 1951 constitution was failure to provide a","Central government","Judiciary","Army","Currency"],
+["The meeting that led to the handover of government to Nigerians was called by","Oliver Lyttelton","John Stuart","Hugh Clifford","Arthur Richards"],
+["The first Nigerian republican president was","Nnamdi Azikiwe","Tafawa Balewa","Aguiyi Ironsi","Yakubu Gowon"],
+["The first coup in Nigeria was led by","Col. Kaduna Nzeogwu","Col. Buka Dimka","Gen. Ironsi","Gen. Babangida"],
+["Who was assassinated in the counter-coup that eventually led to the Biafra war?","Col. Aguiyi Ironsi","Murtala Mohammed","Tafawa Balewa","Nnamdi Azikiwe"],
+["After the civil war, Gowon declared","No victor, no vanquished","Never again","War Against Indiscipline","Operation Feed the Nation"],
+["Murtala Mohammed was killed in a coup led by","Col. Buka Dimka","Col. Nzeogwu","Gen. Babangida","Gen. Abacha"],
+["Who moved the capital of Nigeria from Lagos to Abuja?","Babangida","Gowon","Obasanjo","Shagari"],
+["The annulled June 12, 1993 presidential election was won by","MKO Abiola","Bashir Tofa","Olusegun Obasanjo","Shehu Shagari"],
+["'War Against Indiscipline' (WAI) was introduced by","Buhari","Obasanjo","Shagari","Babangida"],
+["'Operation Feed the Nation' was introduced by","Obasanjo","Buhari","Shagari","Gowon"],
+["The Green Revolution and mass housing estates were introduced by","Shehu Shagari","Obasanjo","Buhari","Gowon"],
+["The last military ruler of Nigeria was","Abdulsalami Abubakar","Sani Abacha","Ibrahim Babangida","Muhammadu Buhari"],
+["The EFCC and ICPC were formed under President","Obasanjo","Yar'Adua","Jonathan","Buhari"],
+["According to Chinua Achebe's 'The Trouble with Nigeria', the problem of Nigeria is","Failure of leadership","Colonialism","Ethnicity","Poverty"],
+["Who stated that nations stay together when citizens share common values and can communicate with each other?","Alesina and Reich","Dobbins","Wimmer","Stephenson"],
+["The US used nation building to restore peace in","Japan and Germany after World War II","Korea and Vietnam","Iraq and Syria","Cuba and Mexico"],
+["The primary objective of nation building according to Dobbins et al is to","Make a violent society peaceful","Increase GDP","Create new states","Expand territory"],
+["'Structuring a national identity using state power' is the definition of nation building by","Deutsch and Folt","Stephenson","Olusanya","Wimmer"],
+["Who explained nation building as a concerted effort to bring people together to achieve common objectives?","Olusanya","Stephenson","Wimmer","Deutsch"],
+["Stephenson identified how many major theories of nation building?","Two","Three","Four","Five"],
+["The theory that nation building is a long-term social process that must not be jump-started from outside is","Evolutionary theory","Revolutionary theory","Conflict theory","Systems theory"],
+["The theory that nation building results from an unpleasant event forcing people to work together is","Revolutionary theory","Evolutionary theory","Natural law","Functionalism"],
+["The desired outcome of nation building according to Wimmer is","Social order and national integration","Economic growth","Military strength","Tourism"],
+["The primary source of challenge to nation building in Nigeria is","Ethnic identity","Climate","Population size","Language"],
+["Excessive enthusiasm for one's ethnic group to the point of bias against others is called","Fanaticism","Nepotism","Patriotism","Conspiracy"],
+["Favouritism by appointing people based on ethnic affiliation rather than capacity is","Nepotism","Fanaticism","Federalism","Meritocracy"],
+["A nation is a collective image of a society while a state focuses on","Structural administration of power","Culture","Language","Religion"],
+["Conspiracy theory is based on","Prejudice, emotional conviction or insufficient evidence","Verified facts","Law","Scientific proof"],
+["Who defined human rights as benefits and privileges a citizen is entitled to?","Enem","Ngangah","Miller","Aquinas"],
+["Which is NOT a feature of human rights?","Alienable at will","Inherent in all humans","Inalienable within legal boundaries","Equally applicable to all"],
+["The main duty to drive human rights falls on","The state and its agents","NGOs only","Churches","Individuals"],
+["Fundamental rights originated from the need to protect individuals from","Arbitrary use of state power","Foreign invasion","Natural disasters","Poverty"],
+["'Justice is the constant and perpetual will to render to everyone what is due to him' was said by","Thomas Aquinas","Socrates","Aristotle","David Miller"],
+["Justice as the internal disposition to do the right thing was said by","Socrates","Thomas Aquinas","Aristotle","David Miller"],
+["Social injustice arises when the principle of ___ is not observed","Equal opportunity","Free speech","Federalism","Democracy"],
+["Which is NOT one of the four views on the root of human rights?","Colonial school","Natural law school","Theological roots","The great philosophers"],
+["The English Bill of Rights was enacted after the Glorious Revolution of","1689","1776","1789","1914"],
+["Right to liberty, human dignity and freedom of movement is a","Personal right","Political right","Proprietary right","Procedural right"],
+["Right to fair hearing is a","Procedural right","Personal right","Proprietary right","Equality right"],
+["Right to property and privacy is a","Proprietary right","Procedural right","Political right","Personal right"],
+["Right to freedom from discrimination is an","Equality right","Personal right","Procedural right","Moral right"],
+["UNESCO was formed in","1946","1948","1945","1960"],
+["WHO was formed in","1948","1946","1945","1950"],
+["In Igbo society, Ofo na Ogu represents","Justice, authority, equity and social justice","War","Wealth","Marriage"],
+["In Igboland, the foremost safeguard of human rights and social justice is","Ala","Chukwu","Ikenga","Ofo Ozo"],
+["Nigeria is the ___ most populated country in the world","6th","1st","10th","3rd"],
+["Nigeria's spiritual tripod is Christianity, Islam and","Traditional religion","Hinduism","Judaism","Buddhism"],
+["The Sokoto Caliphate was formed in the","19th century","15th century","20th century","17th century"],
+["The transition zone between Christianity and Islam in Nigeria is the","Middle belt","South-east","North-east","Coastal area"],
+["The Yoruba supreme God is","Olodumare","Chukwu","Obatala","Sango"],
+["The Igbo supreme God is","Chukwu","Olodumare","Allah","Amadioha"],
+["The umbrella organisation of all Christians in Nigeria is","CAN","NSCIA","CLO","NLC"],
+["Islam was introduced to Nigeria through","Trans-Saharan trade route and conquest","Atlantic slave trade","Missionaries","Berlin Conference"],
+["The cities that helped spread Islam in northern Nigeria were","Kano and Bornu","Lagos and Calabar","Enugu and Aba","Warri and Benin"],
+["The dominant branch of Islam in Nigeria is","Sunni","Shia","Sufi","Quraniyoon"],
+["Which is NOT a Sunni school of thought?","Jafari","Hanafi","Maliki","Hanbali"],
+["Shia Islam in Nigeria was introduced by","Ibrahim Zakzaky","Uthman Dan Fodio","Ahmadu Bello","Shehu Shagari"],
+["The non-sectarian Muslim group that rejects the authority of Hadith is","Quraniyoon","Sunni","Shia","Sufi"],
+["Sufism emphasises","Spiritual devotion and personal connection with the divine","Rituals of ancestors","Politics","Animal sacrifice"],
+["Eid al-Adha is the festival of","Sacrifice","Breaking of fast","Harvest","Lights"],
+["Eid al-Fitr is the festival of","Breaking of fast","Sacrifice","New year","Harvest"],
+["Iri ji / Iwa ji is the","New yam festival","Masquerade festival","Christmas","Boat regatta"],
+["The extinction of the European Aurochs was due to","Overenthusiastic hunting","Climate change","Disease","Pollution"],
+["Rules governing human behaviour that are enforced by third parties through social sanctions are","Norms","Statutes","Policies","Decrees"],
+["What we do and what we believe others do are","Descriptive norms","Injunctive norms","Legal norms","Moral laws"],
+["What others approve of and expect us to do are","Injunctive norms","Descriptive norms","Statutory norms","Cultural myths"],
+["The primary conditioner of human behaviour is","Culture","Law","Religion","Education"],
+["Who accused the Judeo-Christian doctrine of being the root cause of the environmental crisis?","White","Coates","Spretnak","Miller"],
+["Coates argues that the root cause of the environmental crisis is","Modernity","Overpopulation","Technology","Religion"],
+["The belief that economic prosperity determines the wellbeing of all other domains is","Homo economicus","Progressivism","Industrialism","Consumerism"],
+["The belief that wellbeing is achieved by abundant possession and consumption is","Consumerism","Industrialism","Progressivism","Homo economicus"],
+["The belief that mass production is the effective means of improving civilization is","Industrialism","Consumerism","Progressivism","Homo economicus"],
+["The reduction of dry land biological productivity is known as","Desertification","Deforestation","Erosion","Pollution"],
+["Major drivers of environmental crisis include production, consumption, lifestyle and","Social organization","Rainfall","Volcanoes","Tides"],
+["Tourism involves temporary visitation staying for at least","24 hours","12 hours","48 hours","One week"],
+["Temporary visitation staying for less than 24 hours is called","Excursion","Tourism","Pilgrimage","Migration"],
+["Movement of a person from one country to another for tourism is","International tourism","Domestic tourism","Excursion","Nomadism"],
+["The components of tourism are tourism service, tourism destination and","Tourism products","Pilgrims","Excursions","Visas"],
+["Transportation and accommodation are part of tourism","Products","Services","Destinations","Excursions"],
+["Banking, shopping and medical services are part of tourism","Services","Products","Destinations","Excursions"],
+["The most holy cities in the world, per the notes, are Jerusalem, Mecca and","Varanasi","Rome","Canterbury","Cairo"],
+["According to the first school of thought, Nigeria hosted its first European tourist in","1472","1900","1614","1960"],
+["The Nigerian Tourist Board became the Nigerian Tourism Development Corporation in 1976 by Decree No.","54","45","14","99"],
+["People who move from place to place in search of food are","Nomads","Pilgrims","Tourists","Excursionists"],
+["A religious journey to places believed to be holy is","Pilgrimage","Excursion","Migration","Safari"],
+["Ogbunike cave and Zaria city wall are examples of ___ tourism","Historical","Business","Medical","Sport"],
+["'Drama is an imitation of action' was said by","Aristotle","Plato","Omeje","Ogonor"],
+["A building with a stage and sitting arrangements where an audience views plays is a","Theatre","Cinema","Studio","Gallery"],
+["Who said any drama with no connection to the material reality of society is a failure?","Omeje","Aristotle","Ogonor","Aghedo"],
+["An individual struggling with his conscience is conflict of","Individual against self","Individual against society","Individual against fate","Group against group"],
+["The most common form of conflict in drama is","Individual against individual","Individual against self","Individual against nature","Individual against God"],
+["Confrontation between man and nature is","Individual against nature","Individual against fate","Individual against God","Individual against self"],
+["Facing an unchangeable reality and rebelling against it is","Individual against fate","Individual against circumstances","Individual against self","Group against group"],
+["Traditional conflict resolution is based on","Dialogue and negotiation","Force","Litigation","Voting"],
+["What binds the Igbo together in Nigeria is (Ihe jikotara Ndi Igbo bu)","Asusu (language)","Ego (money)","Ala (land)","Oru (work)"],
+["Ikenga has how many horns (mpi)?","Two","One","Three","Four"],
+["Ikenga represents the strength of","Man","Woman","Child","Land"],
+["Okpesi is believed to watch over the","Ancestors","Wealth","Farms","Rivers"],
+["Igbo people living at the sunrise side (owuwa anyanwu) call God","Chineke","Chukwu","Osebuluwa","Amadioha"],
+["Igbo people living along the riverine area call God","Osebuluwa","Chineke","Chukwu","Ala"],
+["Mmonwu ike is a masquerade that","Is violent and carries canes and cutlasses","Is beautifully dressed and gentle","Appears only at funerals","Is only for women"],
+["Mmuo nwayoo is a masquerade that","Wears expensive costume and looks beautiful","Is violent","Carries cutlasses","Appears only at night"],
+["Izaga, ololoma and ijere are types of","Evening/night masquerade","Day masquerade","Funeral rites","Title ranks"],
+["The importance of mmonwu includes entertainment, governance and","Education","Trade","Warfare","Farming"],
+["Which is a taboo (nso) of mmonwu?","It does not eat where people are present","It must dance daily","It must visit every house","It speaks plainly"],
+["A titled Ozo man who dies is dressed in","Ozo regalia and cap","Ordinary clothes","Masquerade attire","Warrior dress"]
+];
+ 
+/* ---------- helpers ---------- */
+const $=id=>document.getElementById(id);
+const LS={get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
+const TOTAL=70, MINS=25;
+let mode='L', user=null, Q=null, timerId=null, wrongOnly=false, lastResult=null;
+ 
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+function show(id){['auth','home','quiz','result'].forEach(x=>$(x).classList.toggle('hide',x!==id))}
+ 
+/* ---------- login ---------- */
+function submitAuth(e){
+  e.preventDefault();
+  const nm=$('nm').value.trim().replace(/\s+/g,' '),err=$('err');err.textContent='';
+  const digits=$('reg').value.replace(/\D/g,'');
+  if(nm.length<3){err.textContent='Enter your full name.';return false}
+  if(digits.length<9||digits.length>11){err.textContent='Enter a valid registration number, e.g. 2021242345 (no slash needed).';return false}
+  const reg=digits.slice(0,4)+'/'+digits.slice(4);
+  const u={reg:reg,name:nm};LS.set('gs208_session',u);enter(u);
+  return false;
+}
+function enter(u){
+  user={reg:u.reg,name:u.name};
+  $('who').classList.remove('hide');$('whoTxt').textContent=user.reg;
+  const act=LS.get('gs208_active_'+user.reg,null);
+  if(act&&act.end>Date.now()){Q=act;showQuiz()}
+  else{if(act)LS.set('gs208_active_'+user.reg,null);showHome()}
+}
+function logout(){
+  if(timerId){clearInterval(timerId);timerId=null}
+  LS.set('gs208_session',null);user=null;Q=null;
+  $('who').classList.add('hide');$('nm').value='';$('reg').value='';show('auth');
+}
+ 
+/* ---------- home ---------- */
+function showHome(){
+  $('hName').textContent=user.name;$('hReg').textContent=user.reg;
+  const h=LS.get('gs208_hist_'+user.reg,[]);
+  $('hist').innerHTML=h.length?'<table><tr><th>Date</th><th>Score</th><th>%</th></tr>'+h.slice().reverse().slice(0,10).map(r=>'<tr><td>'+r.d+'</td><td>'+r.s+'/'+r.t+'</td><td>'+r.p+'%</td></tr>').join('')+'</table>':'No attempts yet.';
+  show('home');
+}
+ 
+/* ---------- quiz ---------- */
+function startQuiz(){
+  const pick=shuffle(B).slice(0,Math.min(TOTAL,B.length)).map(r=>{
+    const opts=shuffle([0,1,2,3]);
+    return {q:r[0],o:opts.map(i=>r[i+1]),a:opts.indexOf(0)};
+  });
+  Q={qs:pick,ans:pick.map(()=>-1),i:0,end:Date.now()+MINS*60000,start:Date.now()};
+  saveQ();showQuiz();
+}
+function saveQ(){if(user&&Q)LS.set('gs208_active_'+user.reg,Q)}
+function showQuiz(){
+  show('quiz');render();tick();
+  if(timerId)clearInterval(timerId);timerId=setInterval(tick,1000);
+  window.scrollTo(0,0);
+}
+function tick(){
+  if(!Q)return;
+  const left=Math.max(0,Q.end-Date.now()),m=Math.floor(left/60000),s=Math.floor(left/1000)%60;
+  const t=$('timer');t.textContent=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');
+  t.classList.toggle('low',left<=5*60000);
+  if(left<=0)finish(true);
+}
+function render(){
+  const q=Q.qs[Q.i],n=Q.qs.length;
+  $('prog').textContent='Question '+(Q.i+1)+' of '+n;
+  const done=Q.ans.filter(x=>x>=0).length;$('ansCount').textContent='Answered: '+done+'/'+n;
+  $('qn').textContent='Question '+(Q.i+1);$('qt').textContent=q.q;
+  $('opts').innerHTML=q.o.map((t,k)=>'<button class="opt'+(Q.ans[Q.i]===k?' sel':'')+'" onclick="pickOpt('+k+')"><b>'+'ABCD'[k]+'.</b><span></span></button>').join('');
+  Array.from($('opts').children).forEach((b,k)=>b.querySelector('span').textContent=q.o[k]);
+  $('prev').disabled=Q.i===0;$('next').textContent=Q.i===n-1?'Review':'Next';
+  $('pal').innerHTML=Q.qs.map((_,k)=>'<button class="'+(Q.ans[k]>=0?'ans ':'')+(k===Q.i?'cur':'')+'" onclick="jump('+k+')">'+(k+1)+'</button>').join('');
+}
+function pickOpt(k){Q.ans[Q.i]=k;saveQ();render()}
+function go(d){const n=Q.qs.length;Q.i=Math.min(n-1,Math.max(0,Q.i+d));saveQ();render();window.scrollTo(0,0)}
+function jump(k){Q.i=k;saveQ();render();window.scrollTo(0,0)}
+function confirmSubmit(){
+  const un=Q.ans.filter(x=>x<0).length;
+  if(confirm(un?('You have '+un+' unanswered question(s). Submit anyway?'):'Submit your test now?'))finish(false);
+}
+function finish(auto){
+  if(!Q)return;
+  if(timerId){clearInterval(timerId);timerId=null}
+  const t=Q.qs.length;let s=0;Q.qs.forEach((q,i)=>{if(Q.ans[i]===q.a)s++});
+  const p=Math.round(s/t*100);
+  lastResult={qs:Q.qs,ans:Q.ans,s:s,t:t,p:p,auto:auto};
+  const h=LS.get('gs208_hist_'+user.reg,[]);
+  h.push({d:new Date().toLocaleString(),s:s,t:t,p:p});LS.set('gs208_hist_'+user.reg,h);
+  LS.set('gs208_active_'+user.reg,null);Q=null;
+  showResult();
+}
+function showResult(){
+  const r=lastResult;wrongOnly=false;$('tgl').textContent='Show wrong only';
+  $('sc').textContent=r.s+' / '+r.t;$('pc').textContent=r.p+'%';
+  $('rm').textContent=(r.auto?'Time up - test auto-submitted. ':'')+(r.p>=70?'Excellent work!':r.p>=50?'Good, keep practising.':r.p>=40?'Fair - read your notes again.':'Needs more reading - review the answers below.');
+  renderReview();show('result');window.scrollTo(0,0);
+}
+function renderReview(){
+  const r=lastResult,box=$('rvList');box.innerHTML='';
+  r.qs.forEach((q,i)=>{
+    const ok=r.ans[i]===q.a;if(wrongOnly&&ok)return;
+    const d=document.createElement('div');d.className='rv '+(ok?'ok':'bad');
+    const h=document.createElement('div');h.style.fontWeight='600';h.textContent=(i+1)+'. '+q.q;
+    const a=document.createElement('div');a.className='a';
+    a.innerHTML='<span class="'+(ok?'good':'wrong')+'">Your answer:</span> <span></span>';
+    a.lastChild.textContent=r.ans[i]>=0?q.o[r.ans[i]]:'(not answered)';
+    d.appendChild(h);d.appendChild(a);
+    if(!ok){const c=document.createElement('div');c.className='a';c.innerHTML='<span class="good">Correct answer:</span> <span></span>';c.lastChild.textContent=q.o[q.a];d.appendChild(c)}
+    box.appendChild(d);
+  });
+  if(!box.children.length)box.innerHTML='<div class="card" style="text-align:center">Perfect score - nothing wrong to show!</div>';
+}
+function toggleWrong(){wrongOnly=!wrongOnly;$('tgl').textContent=wrongOnly?'Show all':'Show wrong only';renderReview()}
+ 
+/* ---------- init ---------- */
+window.addEventListener('beforeunload',saveQ);
+$('reg').addEventListener('input',function(){const d=this.value.replace(/\D/g,'').slice(0,11);this.value=d.length>4?d.slice(0,4)+'/'+d.slice(4):d});
+(function(){
+  const s=LS.get('gs208_session',null);
+  if(s&&s.reg&&s.name)enter(s);else show('auth');
+})();
+</script>
+</body>
+</html>
